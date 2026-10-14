@@ -54,8 +54,7 @@ Vamos agora carregar os textos que analisaremos. Há no curso um tutorial sobre 
 O *corpus* que vamos utilizar neste tutorial pode ser carregado diretamente fazendo:
 
 ```{r}
-corpus_docs <- readr::read_csv2('https://github.com/leobarone/aula-cci-webscraping-text/data/tabelas-parques-utf8.csv',
-                               locale = locale(encoding = 'UTF-8')) %>%
+corpus_docs <- readr::read_csv2('https://raw.githubusercontent.com/leobarone/aula-cci-webscraping-text/refs/heads/master/data/tabelas-parques-utf8.csv', locale = locale(encoding = 'UTF-8')) %>%
   rename(id = url_pagina_parque, texto = texto_parque)
 ```
 ---

@@ -6,11 +6,11 @@ Local: CCI
 
 O objetivo dessa aula será observar como usar R para construir e preparar um coleção de documentos textuais. Há diversas maneiras de se fazer isso. Uma delas é fazendo a raspagem de páginas em HTML. Trabalharemos na aula com um exemplo simples de raspagem construído com páginas de wikipedia. Nosso objetivo será obter um *corpus* de informações sobre todos os parques nacionais brasileiros:
 
-- [Webscraping Wikipedia - Parques nacionais](https://github.com/leobarone/aula-cci-webscraping-text/tutoriais/webscraping-wikipedia-parques-nacionais.md)
+- [Webscraping Wikipedia - Parques nacionais](https://github.com/leobarone/aula-cci-webscraping-text/blob/master/tutoriais/webscraping-wikipedia-parques-nacionais.md)
 
 A preparação de textos individuais ou de um *corpus* é uma das tarefas mais importantes que precedem a análise. No exemplo a seguir, faremos a manipulação do *corpus* sobre parques nacionas construído no exemplo anterior com os pacotes de R essenciais para preparação de texto:
 
-- [Texto como dado - Parques Nacionais](https://github.com/leobarone/aula-cci-webscraping-text/tutoriais/textos-como-dado-parques-nacionais.md)
+- [Texto como dado - Parques Nacionais](https://github.com/leobarone/aula-cci-webscraping-text/blob/master/tutoriais/textos-como-dado-parques-nacionais.md)
 
 Para quem tiver interesse em exemplos mais avançados e no uso de APIs e extração de dados de PDFs, segue abaixo o exemplo utilizado no curso do cebrap.lab em 2026 [IA em R e python](https://github.com/leobarone/cebrap-lab-ia-r-python/):
 
