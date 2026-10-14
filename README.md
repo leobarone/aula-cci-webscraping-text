@@ -1,8 +1,12 @@
 # cebrap.lab e CCI - Webscraping e Análise Texto com R
 
 Data e Hora: 14/10/2026, das 9h às 13h
+
 Instrutor: Leonardo Sangali Barone 
+
 Local: CCI
+
+## Objetivo e tutoriais
 
 O objetivo dessa aula será observar como usar R para construir e preparar um coleção de documentos textuais. Há diversas maneiras de se fazer isso. Uma delas é fazendo a raspagem de páginas em HTML. Trabalharemos na aula com um exemplo simples de raspagem construído com páginas de wikipedia. Nosso objetivo será obter um *corpus* de informações sobre todos os parques nacionais brasileiros:
 
