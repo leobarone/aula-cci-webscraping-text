@@ -57,6 +57,3 @@ for (url_p in url_parques) {
     )
   
 }
-
-bind_cols(tabela_parques, tabela_textos) %>% write.csv2('tabelas-parques.csv', fileEncoding = 'latin2')
-bind_cols(tabela_parques, tabela_textos) %>% write_csv2('tabelas-parques-utf8.csv')
