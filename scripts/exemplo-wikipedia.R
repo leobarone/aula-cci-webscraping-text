@@ -57,3 +57,6 @@ for (url_p in url_parques) {
     )
   
 }
+
+
+#bind_cols(tibble(id=1:76), tabela_parques, tabela_textos) %>% write_csv2('tabelas-parques-utf8,csv')
