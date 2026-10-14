@@ -61,8 +61,8 @@ corpus_docs <- readr::read_csv2('https://raw.githubusercontent.com/leobarone/aul
   rename(url_parque = url_pagina_parque, texto = texto_parque)
 ```
 
-Note que a variável **`id`** já está na base e identifica numericamente cada parque. A URL de cada página permanece na coluna **`url_parque`** e seu conteúdo textual está na coluna **`texto`**.
----
+
+Observe o cabeçalho da nova base: a variável **`id`** já identifica numericamente cada parque. Além dela, temos informações como **`nome`**, **`localizacao`**, **`data_de_criacao`**, **`area`** e **`descricao`**. As colunas que contêm o endereço e o texto de cada página são **`url_pagina_parque`** e **`texto_parque`**. Com a função `rename()`, passamos a chamá-las **`url_parque`** e **`texto`**, sem alterar o identificador **`id`**. As demais informações permanecem no data frame e poderão ser utilizadas em outras análises.
 
 ## Limpeza e preparação de textos com *stringr*
 

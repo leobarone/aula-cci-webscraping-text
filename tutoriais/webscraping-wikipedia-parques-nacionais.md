@@ -1,9 +1,3 @@
----
-title: "Tutorial — Raspagem de dados na Wikipédia"
-subtitle: "Parques nacionais do Brasil"
-output: html_document
----
-
 # Apresentação do problema
 
 Vamos começar visitando a página da [Wikipédia que apresenta a lista de parques nacionais do Brasil](https://pt.wikipedia.org/wiki/Lista_de_parques_nacionais_do_Brasil). Abra o link no navegador e observe o conteúdo da página antes de continuar a atividade.

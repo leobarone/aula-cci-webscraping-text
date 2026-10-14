@@ -28,14 +28,16 @@ Vamos utilizar os seguintes pacotes:
 * **tidyverse**: manipulação de dados em data frames (`dplyr`, `tibble`, `purrr`, etc.).
 * **tidytext**: organização do **corpus** em formato “*tidy*” e funções para tokenização e análises.
 * **tm**: lista de *stopwords* (português e inglês).
+* **wordcloud**: construção de nuvens de palavras.
 
 Se ainda não tiver instalado tais pacotes, instale-os:
 
-```{r}
+```{r eval=FALSE}
 install.packages('stringr')
 install.packages('tidyverse')
 install.packages('tidytext')
 install.packages('tm')
+install.packages('wordcloud')
 ```
 
 A seguir, carregue todos:
@@ -45,9 +47,10 @@ library(stringr)
 library(tidyverse)
 library(tidytext)
 library(tm)
+library(wordcloud)
 ```
 
-Vamos agora carregar os textos que analisaremos. Há no curso um tutorial sobre como criar um corpus a partir da raspagem dos textos das páginas dos parques nacionais na Wikipédia. Você pode fazê-lo antes desse, se quiser aprender um pouco sobre o assunto.
+Vamos agora carregar os textos que analisaremos. Há no curso um tutorial sobre como criar um corpus a partir da raspagem dos textos das páginas dos parques nacionais na Wikipedia. Você pode fazê-lo antes desse, se quiser aprender um pouco sobre o assunto.
 
 *Corpus*, no contexto do análise de dados, é o conjunto de documentos textuais. Em R podemos representá-lo como lista ou como um data frame. Deve sempre conter pelo menos dois atributos mínimos: um identificador e o conteúdo do texto (texto). Pode conter também outros metadados daquele texto, como autoria, data, grupo de documentos ao qual pertence, etc.
 
@@ -55,9 +58,11 @@ O *corpus* que vamos utilizar neste tutorial pode ser carregado diretamente faze
 
 ```{r}
 corpus_docs <- readr::read_csv2('https://raw.githubusercontent.com/leobarone/aula-cci-webscraping-text/refs/heads/master/data/tabelas-parques-utf8.csv', locale = locale(encoding = 'UTF-8')) %>%
-  rename(id = url_pagina_parque, texto = texto_parque)
+  rename(url_parque = url_pagina_parque, texto = texto_parque)
 ```
----
+
+
+Observe o cabeçalho da nova base: a variável **`id`** já identifica numericamente cada parque. Além dela, temos informações como **`nome`**, **`localizacao`**, **`data_de_criacao`**, **`area`** e **`descricao`**. As colunas que contêm o endereço e o texto de cada página são **`url_pagina_parque`** e **`texto_parque`**. Com a função `rename()`, passamos a chamá-las **`url_parque`** e **`texto`**, sem alterar o identificador **`id`**. As demais informações permanecem no data frame e poderão ser utilizadas em outras análises.
 
 ## Limpeza e preparação de textos com *stringr*
 
@@ -113,14 +118,14 @@ Vejamos como ficaram os primeiros mil caracateres do texto depois de modificado:
 
 ```{r}
 corpus_docs %>% 
-  slice(1) %>%             # seleciona o 1o texto
+  slice(2) %>%             # seleciona o 1o texto
   pull(texto) %>%          # retira do data frame como vetor
   str_sub(1, 1000)         # limita do 1o ao milesimo caracter
 ```
 
 ### Normalização de espaços
 
-Há muitos espeços inúteis no texto provenientes da formatação das páginas da Wikipédia. Com `str_squish` podemos remover estes espaços que estão sobrando e comprimir múltiplos espaços internos em um único:
+Há muitos espeços inúteis no texto provenientes da formatação das páginas da Wikipedia. Com `str_squish` podemos remover estes espaços que estão sobrando e comprimir múltiplos espaços internos em um único:
 
 ```{r}
 corpus_docs <- corpus_docs %>%
@@ -222,11 +227,11 @@ Agora vamos organizar o texto em **formato *tidy***: cada linha corresponde a um
 
 ### 1) Tokenização em palavras
 
-Neste exercício, vamos trabalhar apenas com as variáveis **`id`** e **`texto`** do nosso corpus:
+Neste exercício, vamos trabalhar apenas com as variáveis **`id`**, **`url_parque`** e **`texto`** do nosso corpus:
 
 ```{r}
 corpus_docs <- corpus_docs %>% 
-  select(id, texto)
+  select(id, url_parque, texto)
 ```
 
 O primeiro passo para organizar um texto para análise com o pacote *tidytext* é a **tokenização** da variável de conteúdo. “Tokenizar” significa fragmentar o texto em unidades, que podem ser **palavras**, **palavras**, **duplas**, **trios** ou conjuntos ainda maiores de palavras, como **sentenças**, ou menores, como conjuntos de **caracteres**. Vamos trabalhar inicialmente com **palavras** como tokens:
@@ -238,7 +243,7 @@ docs_token <- corpus_docs %>%
 glimpse(docs_token)
 ```
 
-Note que a variável **`id`** é mantida. `texto`, porém, se torna `word`, organizada ordenadamente na sequência prévia dos textos. Veja que o formato de um *tidytext* é completamente diferente do data frame original, pois o conteúdo textual agora são os **tokens** (palavras).
+Note que as variáveis **`id`** e **`url_parque`** são mantidas. `texto`, porém, se torna `word`, organizada ordenadamente na sequência prévia dos textos. Veja que o formato de um *tidytext* é completamente diferente do data frame original, pois o conteúdo textual agora são os **tokens** (palavras).
 
 ## Palavras muito comuns: stopwords
 
@@ -274,7 +279,7 @@ docs_token %>%
   count(word, sort = TRUE) %>% View
 ```
 
-Opa! Há muitos tokens que são apenas **caracteres soltos**. Em páginas da Wikipédia é comum encontrar símbolos, siglas muito curtas ou marcas de formatação. Vamos, assim, **excluir todas as palavras de 1 caracter** e rever a frequência dos tokens:
+Opa! Há muitos tokens que são apenas **caracteres soltos**. Em páginas da Wikipedia é comum encontrar símbolos, siglas muito curtas ou marcas de formatação. Vamos, assim, **excluir todas as palavras de 1 caracter** e rever a frequência dos tokens:
 
 ```{r}
 docs_token <- docs_token %>%
@@ -286,12 +291,12 @@ docs_token %>%
 
 Bem melhor. Ainda seria possível aprimorar a limpeza do texto, mas podemos avançar.
 
-Com `ggplot2`, que é um pacote gráfico de R, podemos construir um **gráfico de barras** dos termos mais frequentes (por exemplo, com frequência maior do que 10 — ajuste conforme o volume do seu corpus). Neste ponto do curso, nada do que estamos fazendo abaixo deve ser novo a você:
+Com `ggplot2`, que é um pacote gráfico de R, podemos construir um **gráfico de barras** dos termos mais frequentes (por exemplo, com frequência maior do que 50 — ajuste conforme o volume do seu corpus). Neste ponto do curso, nada do que estamos fazendo abaixo deve ser novo a você:
 
 ```{r}
 docs_token %>%
   count(word, sort = TRUE) %>%
-  filter(n > 10) %>%
+  filter(n > 50) %>%
   mutate(word = reorder(word, n)) %>%
   ggplot(aes(word, n)) +
     geom_col() +
@@ -392,6 +397,30 @@ corpus_docs %>%
   anti_join(stopwords_df, by = c("word3" = "word")) %>%
   count(word1, word2, word3, sort = TRUE)
 ```
+
+## Nuvem de palavras
+
+Podemos também representar as frequências das palavras de nosso *corpus* por meio de uma **nuvem de palavras**. Neste tipo de gráfico, as palavras mais frequentes são apresentadas em tamanho maior. Vamos utilizar o pacote *wordcloud*, mas sem precisar preparar novamente os textos: o objeto `docs_token` já contém as palavras separadas e sem as *stopwords* que removemos anteriormente.
+
+Primeiro, vamos contar as palavras usando `count`, exatamente como fizemos no gráfico de barras:
+
+```{r}
+frequencia_palavras <- docs_token %>%
+  count(word, sort = TRUE)
+```
+
+Agora podemos construir nossa nuvem de palavras. A função `wordcloud` recebe um vetor com as palavras (`words`) e outro com suas frequências (`freq`). Com `max.words = 100`, limitamos o gráfico às 100 palavras mais frequentes. O argumento `random.order = FALSE` faz com que as palavras mais frequentes sejam posicionadas primeiro:
+
+```{r}
+wordcloud(
+  words = frequencia_palavras$word,
+  freq = frequencia_palavras$n,
+  max.words = 100,
+  random.order = FALSE
+)
+```
+
+Experimente alterar `max.words` para 30 ou 200 e observe como a nuvem de palavras muda.
 
 ## Onde aprender um pouco mais?
 
